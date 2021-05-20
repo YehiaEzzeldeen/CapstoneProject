@@ -1,0 +1,21 @@
+version: 2
+
+jobs:
+  Lint HTML:
+    docker:
+      - image: circleci/python:3.7.3-stretch
+      
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+  
+      - run:
+          name: Linting HTML
+          command: |
+            tidy -q -e *.html
+
+workflows:
+  main:
+    jobs:
+      - Lint HTML
