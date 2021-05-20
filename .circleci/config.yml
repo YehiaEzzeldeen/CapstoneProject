@@ -13,6 +13,7 @@ jobs:
       - run:
           name: Linting HTML
           command: |
+            yum install tidy -y
             tidy -q -e *.html
 
 workflows:
