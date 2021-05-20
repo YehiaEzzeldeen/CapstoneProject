@@ -30,7 +30,7 @@ jobs:
           name: Docker-configuration
           command: |
             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
-            docker build -t yehia14/capstone
+            docker build -t yehia14/capstone .
             docker push yehia14/capstone     
 
 workflows:
@@ -38,3 +38,5 @@ workflows:
     jobs:
       - Lint HTML
       - Building Docker Image
+          requires:
+            - "Lint HTML"
