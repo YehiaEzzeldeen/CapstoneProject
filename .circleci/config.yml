@@ -37,5 +37,6 @@ workflows:
   main:
     jobs:
       - Lint HTML
-      - Building Docker Image
-        requires: [Lint HTML]
+      - Building Docker Image:
+          requires:
+            - Lint HTML
