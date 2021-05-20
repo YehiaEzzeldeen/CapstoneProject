@@ -11,10 +11,14 @@ jobs:
       - checkout
   
       - run:
-          name: Linting HTML
+          name: installing tidy
           command: |
             sudo apt-get install tidy -y
-            tidy -q -e *.html
+
+      - run:
+          name: Linting HTML
+          command: |
+            tidy -q -e *.html      
 
 workflows:
   main:
