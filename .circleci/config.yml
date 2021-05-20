@@ -18,7 +18,20 @@ jobs:
       - run:
           name: Linting HTML
           command: |
-            tidy -q -e *.html      
+            tidy -q -e *.html
+
+
+  Building Docker Image: 
+    machine: true
+    working_directory: ~/app
+    steps:
+      - checkout
+      - run:
+          name: Docker-configuration
+          command: |
+            docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+            docker build -t yehia14/capstone
+            docker push yehia14/capstone     
 
 workflows:
   main:
