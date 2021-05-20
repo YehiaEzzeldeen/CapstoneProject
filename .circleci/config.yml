@@ -38,5 +38,4 @@ workflows:
     jobs:
       - Lint HTML
       - Building Docker Image
-          requires:
-            - "Lint HTML"
+        requires: [Lint HTML]
