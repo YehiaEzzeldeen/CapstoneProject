@@ -76,10 +76,10 @@ orbs:
 workflows:
   deployment:
     jobs:
-      - lint-app
-      - build:
+      - Lint HTML
+      - Building Docker Image:
           requires:
-            - "lint-app"
+            - "Lint HTML"
       - aws-eks/create-cluster:
           cluster-name: capstone
       - create-deployment:
