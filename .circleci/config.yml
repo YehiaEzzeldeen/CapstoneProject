@@ -72,7 +72,9 @@ workflows:
       - aws-eks/create-cluster:
           requires:
             - building
-      - deploying:
+      - Deploying to EKS:
           requires:
             - aws-eks/create-cluster
-      - testing
+      - testing:
+          requires:
+            - Deploying to EKS
