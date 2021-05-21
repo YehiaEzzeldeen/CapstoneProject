@@ -44,7 +44,7 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: deployment.yml
-          resource-name: green-deployment-${CIRCLE_WORKFLOW_ID:0:7}
+          resource-name: deployment/green-deployment-${CIRCLE_WORKFLOW_ID:0:7}
 
   testing:
     executor: aws-eks/python3
