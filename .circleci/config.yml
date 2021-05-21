@@ -44,7 +44,7 @@ jobs:
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: deployment.yml
-          resource-name: Capstone/GreenDeployment
+          resource-name: GreenDeployment
 
   testing:
     executor: aws-eks/python3
@@ -70,6 +70,7 @@ workflows:
           requires:
             - Lint HTML
       - aws-eks/create-cluster:
+          cluster-name: GreenDeployment
           requires:
             - Building Docker Image
       - Deploying to EKS:
