@@ -68,7 +68,16 @@ jobs:
             kubectl get svc
             kubectl get nodes
             kubectl get deployment
-                      
+
+  removing Blue Deployment:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: deleting blue deployment
+          command: |
+            aws ec2 terminate-instances --instance-ids  i-03140ca0e59eef143                   
 orbs:
   aws-eks: circleci/aws-eks@1.0.3
   kubernetes: circleci/kubernetes@0.11.2
@@ -102,7 +111,6 @@ workflows:
           cluster-name: capstone
           requires:
             - aws-eks/update-container-image
-      - aws-eks/delete-cluster:
-          cluster-name: capstone
-          requires:
-            - test-cluster
+      #- removing Blue Deployment:
+          #requires:
+            #- test-cluster
