@@ -33,78 +33,76 @@ jobs:
             docker build -t yehia14/capstone .
             docker push yehia14/capstone 
 
-  Deploying to EKS:
+  create-deployment:
     executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          capstone
+        type: string
     steps:
       - checkout
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: green-deployment-${CIRCLE_WORKFLOW_ID:0:7}
+          cluster-name: << parameters.cluster-name >>
           install-kubectl: true
       - kubernetes/create-or-update-resource:
           get-rollout-status: true
-          resource-file-path: deployment.yml
-          resource-name: deployment/green-deployment-${CIRCLE_WORKFLOW_ID:0:7}
+          resource-file-path: appdeployment.yml
+          resource-name: deployment/capstone
 
-  testing:
+  test-cluster:
     executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          capstone
+        type: string
     steps:
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: green-deployment-${CIRCLE_WORKFLOW_ID:0:7}
+          cluster-name: << parameters.cluster-name >>
       - run:
           name: Test cluster
           command: |
             kubectl get svc
             kubectl get nodes
             kubectl get deployment
-
-  curl-test:
-    docker:
-      - image: python:3.7-alpine3.11
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update curl nodejs npm
-            pip install awscli
-      - run:
-          name: Frontend smoke test.
-          command: |
-            if curl -s "http://udapeople-hdqqwd1278.s3-website-us-west-1.amazonaws.com" | grep "Yehia"
-            then
-              return 0
-            else
-              return 1
-            fi
-
-  removing Blue Deployment:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: deleting blue deployment
-          command: |
-            aws ec2 terminate-instances --instance-ids  i-03140ca0e59eef143                      
+                      
 orbs:
-  aws-eks: circleci/aws-eks@1.1.0
+  aws-eks: circleci/aws-eks@1.0.3
   kubernetes: circleci/kubernetes@0.11.2
+
 workflows:
-  main:
+  deployment:
     jobs:
-      - Lint HTML
-      - Building Docker Image:
+      - lint-app
+      - build:
           requires:
-            - Lint HTML
+            - "lint-app"
       - aws-eks/create-cluster:
-          cluster-name: green-deployment-${CIRCLE_WORKFLOW_ID:0:7}
-          requires:
-            - Building Docker Image
-      - Deploying to EKS:
+          cluster-name: capstone
+      - create-deployment:
+          cluster-name: capstone
           requires:
             - aws-eks/create-cluster
-      - testing:
+      - aws-eks/update-container-image:
+          cluster-name: capstone
+          container-image-updates: gsvcapstone=shubhamrajput11/gsvcapstone
+          post-steps:
+              - kubernetes/delete-resource:
+                  resource-names: capstone
+                  resource-types: deployment
+                  wait: true
+          record: true
           requires:
-            - Deploying to EKS
+              - create-deployment
+          resource-name: deployment/capstone
+      - test-cluster:
+          cluster-name: capstone
+          requires:
+            - aws-eks/update-container-image
+      - aws-eks/delete-cluster:
+          cluster-name: capstone
+          requires:
+            - test-cluster
