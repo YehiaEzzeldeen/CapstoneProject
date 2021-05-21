@@ -31,8 +31,47 @@ jobs:
           command: |
             docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
             docker build -t yehia14/capstone .
-            docker push yehia14/capstone     
+            docker push yehia14/capstone 
 
+  Deploying to EKS:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name: GreenDeployment
+        description: |
+          GreenDeployment
+        type: string
+    steps:
+      - checkout
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: GreenDeployment
+          install-kubectl: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: deployment.yml
+          resource-name: Capstone/GreenDeployment
+
+  testing:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          devopsproject5
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: GreenDeployment
+      - run:
+          name: Test cluster
+          command: |
+            kubectl get svc
+            kubectl get nodes
+            kubectl get deployment
+                      
+orbs:
+  aws-eks: circleci/aws-eks@1.1.0
+  kubernetes: circleci/kubernetes@0.11.2
 workflows:
   main:
     jobs:
@@ -40,3 +79,10 @@ workflows:
       - Building Docker Image:
           requires:
             - Lint HTML
+      - aws-eks/create-cluster:
+          requires:
+            - building
+      - deploying:
+          requires:
+            - aws-eks/create-cluster
+      - testing
