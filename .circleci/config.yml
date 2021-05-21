@@ -88,7 +88,7 @@ workflows:
             - aws-eks/create-cluster
       - aws-eks/update-container-image:
           cluster-name: capstone
-          container-image-updates: gsvcapstone=shubhamrajput11/gsvcapstone
+          container-image-updates: capstone=yehia14/capstone
           post-steps:
               - kubernetes/delete-resource:
                   resource-names: capstone
