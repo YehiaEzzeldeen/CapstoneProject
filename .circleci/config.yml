@@ -35,11 +35,6 @@ jobs:
 
   Deploying to EKS:
     executor: aws-eks/python3
-    parameters:
-      cluster-name: GreenDeployment
-        description: |
-          GreenDeployment
-        type: string
     steps:
       - checkout
       - kubernetes/install
@@ -53,11 +48,6 @@ jobs:
 
   testing:
     executor: aws-eks/python3
-    parameters:
-      cluster-name:
-        description: |
-          devopsproject5
-        type: string
     steps:
       - kubernetes/install
       - aws-eks/update-kubeconfig-with-authenticator:
