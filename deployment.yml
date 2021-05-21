@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   name: green-deployment
   labels:
-    app: GreenDeployment
+    app: green-deployment
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: GreenDeployment
+      app: green-deployment
   template:
     metadata:
       labels:
-        app: GreenDeployment
+        app: green-deployment
     spec:
       containers:
         - image: yehia14/capstone
           imagePullPolicy: Always
-          name: GreenDeployment
+          name: green-deployment
           ports:
             - containerPort: 80
 
@@ -28,11 +28,11 @@ kind: Service
 metadata:
   name: green-deployment
   labels:
-    app: GreenDeployment
+    app: green-deployment
 spec:
   type: LoadBalancer
   selector:
-    app: GreenDeployment
+    app: green-deployment
   ports:
     - port: 80
       targetPort: 80
