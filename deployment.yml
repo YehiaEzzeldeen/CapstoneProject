@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: GreenDeployment
+  name: green-deployment
   labels:
     app: GreenDeployment
   namespace: default
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: GreenDeployment
+  name: green-deployment
   labels:
     app: GreenDeployment
 spec:
