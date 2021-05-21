@@ -71,7 +71,7 @@ workflows:
             - Lint HTML
       - aws-eks/create-cluster:
           requires:
-            - building
+            - Building Docker Image
       - Deploying to EKS:
           requires:
             - aws-eks/create-cluster
